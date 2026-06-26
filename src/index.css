@@ -1,0 +1,179 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Manrope", "Inter", system-ui, -apple-system, sans-serif;
+  --color-accent-50: #f5f3ff;
+  --color-accent-100: #ede9fe;
+  --color-accent-200: #ddd6fe;
+  --color-accent-300: #c4b5fd;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #8b5cf6;
+  --color-accent-600: #7c3aed;
+  --color-accent-700: #6d28d9;
+  --color-ink-50: #fafafa;
+  --color-ink-100: #f4f4f5;
+  --color-ink-200: #e4e4e7;
+  --color-ink-300: #d4d4d8;
+  --color-ink-400: #a1a1aa;
+  --color-ink-500: #71717a;
+  --color-ink-600: #52525b;
+  --color-ink-700: #3f3f46;
+  --color-ink-800: #27272a;
+  --color-ink-850: #1d1d21;
+  --color-ink-900: #18181b;
+  --color-ink-950: #0f0f12;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+/* ---------- Scrollbars ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 58, 237, 0.25) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.25);
+  border-radius: 99px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------- Note editor (contentEditable) ---------- */
+.note-editor {
+  outline: none;
+  line-height: 1.7;
+  font-size: 15.5px;
+}
+.note-editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--color-ink-400);
+  pointer-events: none;
+}
+.note-editor h1 {
+  font-size: 1.6em;
+  font-weight: 800;
+  margin: 0.6em 0 0.3em;
+  letter-spacing: -0.02em;
+}
+.note-editor h2 {
+  font-size: 1.3em;
+  font-weight: 700;
+  margin: 0.6em 0 0.25em;
+  letter-spacing: -0.01em;
+}
+.note-editor ul,
+.note-editor ol {
+  padding-left: 1.4em;
+  margin: 0.35em 0;
+}
+.note-editor ul {
+  list-style: disc;
+}
+.note-editor ol {
+  list-style: decimal;
+}
+.note-editor blockquote {
+  border-left: 3px solid var(--color-accent-400);
+  padding-left: 0.9em;
+  margin: 0.5em 0;
+  color: var(--color-ink-500);
+  font-style: italic;
+}
+.note-editor a {
+  color: var(--color-accent-600);
+  text-decoration: underline;
+}
+.note-editor input[type="checkbox"] {
+  accent-color: var(--color-accent-600);
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  vertical-align: -2px;
+  cursor: pointer;
+}
+.note-editor .todo {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  margin: 2px 0;
+}
+.note-editor img {
+  max-width: 100%;
+  border-radius: 14px;
+  margin: 8px 0;
+}
+
+/* ---------- Glass surfaces ---------- */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+}
+.dark .glass {
+  background: rgba(24, 24, 27, 0.72);
+}
+
+/* ---------- Recording pulse ---------- */
+@keyframes rec-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45);
+  }
+  70% {
+    box-shadow: 0 0 0 22px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+.rec-pulse {
+  animation: rec-pulse 1.6s ease-out infinite;
+}
+
+/* ---------- Skeleton shimmer ---------- */
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-ink-100) 25%,
+    var(--color-ink-200) 50%,
+    var(--color-ink-100) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+.dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-ink-800) 25%,
+    var(--color-ink-700) 50%,
+    var(--color-ink-800) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+/* line clamp helper for old browsers handled by tailwind */
