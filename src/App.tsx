@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useReminders } from "./hooks/useReminders";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowDownWideNarrow,
@@ -41,6 +42,7 @@ function useTheme() {
 const VIEW_TITLES: Record<string, string> = {
   all: "Все заметки",
   favorites: "Избранное",
+  reminders: "Напоминания",
   archive: "Архив",
   trash: "Корзина",
 };
@@ -54,6 +56,13 @@ const SORT_LABELS: Record<SortMode, string> = {
 export default function App() {
   const store = useNotesStore();
   const { theme, setTheme } = useTheme();
+
+  // Напоминания — проверяем каждые 30 сек
+  useReminders(
+    store.notes,
+    (noteId) => store.markReminderFired(noteId),
+    (noteId, nextAt) => store.rescheduleReminder(noteId, nextAt),
+  );
 
   const [view, setView] = useState<ViewId>({ kind: "all" });
   const [query, setQuery] = useState("");
@@ -155,6 +164,7 @@ export default function App() {
           folders={store.folders}
           tags={store.allTags}
           notes={store.notes}
+          remindersCount={store.remindersCount}
           theme={theme}
           onTheme={setTheme}
           onCreateFolder={(name) => store.createFolder(name)}
@@ -189,6 +199,7 @@ export default function App() {
                 folders={store.folders}
                 tags={store.allTags}
                 notes={store.notes}
+                remindersCount={store.remindersCount}
                 theme={theme}
                 onTheme={setTheme}
                 onCreateFolder={(name) => store.createFolder(name)}
@@ -360,6 +371,7 @@ export default function App() {
             folders={store.folders}
             onPatch={(patch) => store.updateNote(selected.id, patch)}
             onToggleFlag={(key) => store.toggleFlag(selected.id, key)}
+            onSetReminder={(reminder) => store.setReminder(selected.id, reminder)}
             onDelete={() => {
               store.moveToTrash(selected.id);
               setSelectedId(null);

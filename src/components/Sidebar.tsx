@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Archive,
+  Bell,
   FolderPlus,
   Hash,
   Moon,
@@ -21,6 +22,7 @@ interface Props {
   folders: Folder[];
   tags: string[];
   notes: Note[];
+  remindersCount: number;
   theme: ThemeMode;
   onTheme: (t: ThemeMode) => void;
   onCreateFolder: (name: string) => void;
@@ -77,6 +79,7 @@ export default function Sidebar({
   folders,
   tags,
   notes,
+  remindersCount,
   theme,
   onTheme,
   onCreateFolder,
@@ -143,6 +146,13 @@ export default function Sidebar({
           icon={<Star className="size-4" />}
           label="Избранное"
           count={counts.favorites}
+        />
+        <Item
+          active={viewEq(view, { kind: "reminders" })}
+          onClick={() => pick({ kind: "reminders" })}
+          icon={<Bell className="size-4" />}
+          label="Напоминания"
+          count={remindersCount || undefined}
         />
         <Item
           active={viewEq(view, { kind: "archive" })}

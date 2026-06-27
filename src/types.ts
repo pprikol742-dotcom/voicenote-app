@@ -2,28 +2,33 @@
 
 export interface AudioClip {
   id: string;
-  /** base64 data-URL аудио (webm/ogg) */
   dataUrl: string;
-  /** длительность в секундах */
   duration: number;
-  /** расшифровка речи (Speech-to-Text) */
   transcript: string;
   createdAt: number;
+}
+
+export interface Reminder {
+  /** timestamp когда сработает */
+  at: number;
+  /** повтор: нет / каждый день / каждую неделю */
+  repeat: 'none' | 'daily' | 'weekly';
+  /** уже сработало (не повтор) */
+  fired: boolean;
 }
 
 export interface Note {
   id: string;
   title: string;
-  /** HTML-содержимое редактора */
   content: string;
   folderId: string | null;
   tags: string[];
   pinned: boolean;
   favorite: boolean;
   archived: boolean;
-  /** timestamp удаления (в корзине) или null */
   deletedAt: number | null;
   audios: AudioClip[];
+  reminder: Reminder | null;
   createdAt: number;
   updatedAt: number;
 }
@@ -35,13 +40,13 @@ export interface Folder {
 }
 
 export type ViewId =
-  | { kind: "all" }
-  | { kind: "favorites" }
-  | { kind: "archive" }
-  | { kind: "trash" }
-  | { kind: "folder"; folderId: string }
-  | { kind: "tag"; tag: string };
+  | { kind: 'all' }
+  | { kind: 'favorites' }
+  | { kind: 'archive' }
+  | { kind: 'trash' }
+  | { kind: 'reminders' }
+  | { kind: 'folder'; folderId: string }
+  | { kind: 'tag'; tag: string };
 
-export type SortMode = "updated" | "created" | "title";
-
-export type ThemeMode = "light" | "dark" | "system";
+export type SortMode = 'updated' | 'created' | 'title';
+export type ThemeMode = 'light' | 'dark' | 'system';
