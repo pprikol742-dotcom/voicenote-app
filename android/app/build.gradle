@@ -1,4 +1,6 @@
-aapply plugin: 'com.android.application'
+plugins {
+    id 'com.android.application'
+}
 android {
     namespace "ru.voicenote.app"
     compileSdk rootProject.ext.compileSdkVersion
