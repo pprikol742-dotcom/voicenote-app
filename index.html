@@ -7,14 +7,43 @@
     <meta name="description" content="Блокнот — современные текстовые и голосовые заметки с транскрибацией" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>Блокнот — заметки и голос</title>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <style>
+      #yandex-banner-wrap {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9999;
+        text-align: center;
+        background: transparent;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="yandex-banner-wrap">
+      <div id="yandex_rtb_R-M-19526722-2"></div>
+    </div>
+    <div id="yandex_rtb_R-M-19526722-1"></div>
+    <script>
+      window.yaContextCb = window.yaContextCb || [];
+      window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+          blockId: "R-M-19526722-2",
+          renderTo: "yandex_rtb_R-M-19526722-2"
+        });
+      });
+      window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+          blockId: "R-M-19526722-1",
+          renderTo: "yandex_rtb_R-M-19526722-1",
+          type: "fullscreen"
+        });
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
