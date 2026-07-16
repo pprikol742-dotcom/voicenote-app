@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.DefaultLifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ProcessLifecycleOwner;
 import com.getcapacitor.BridgeActivity;
 import com.yandex.mobile.ads.appopenad.AppOpenAd;
@@ -22,7 +24,6 @@ import com.yandex.mobile.ads.banner.BannerAdView;
 import com.yandex.mobile.ads.common.AdError;
 import com.yandex.mobile.ads.common.AdRequest;
 import com.yandex.mobile.ads.common.AdRequestError;
-import com.yandex.mobile.ads.common.DefaultProcessLifecycleObserver;
 import com.yandex.mobile.ads.common.ImpressionData;
 import com.yandex.mobile.ads.common.YandexAds;
 
@@ -64,7 +65,7 @@ public class MainActivity extends BridgeActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         if (bannerAdView != null) {
             bannerAdView.destroy();
         }
@@ -157,9 +158,9 @@ public class MainActivity extends BridgeActivity {
         appOpenAdLoader = new AppOpenAdLoader(this);
         loadAppOpenAd();
 
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(new DefaultProcessLifecycleObserver() {
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new DefaultLifecycleObserver() {
             @Override
-            public void onProcessCameForeground() {
+            public void onStart(@NonNull LifecycleOwner owner) {
                 if (isFirstForegroundEvent) {
                     // Skip the initial cold start so the ad never covers the splash screen.
                     isFirstForegroundEvent = false;
