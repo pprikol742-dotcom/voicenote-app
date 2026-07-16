@@ -21,11 +21,17 @@ import com.yandex.mobile.ads.banner.BannerAdSize;
 import com.yandex.mobile.ads.banner.BannerAdView;
 import com.yandex.mobile.ads.common.AdError;
 import com.yandex.mobile.ads.common.AdRequest;
-import com.yandex.mobile.ads.common.AdRequestConfiguration;
 import com.yandex.mobile.ads.common.AdRequestError;
 import com.yandex.mobile.ads.common.DefaultProcessLifecycleObserver;
 import com.yandex.mobile.ads.common.ImpressionData;
 import com.yandex.mobile.ads.common.YandexAds;
+
+// NOTE: Yandex Mobile Ads SDK 8.0.0 (April 2026) introduced breaking API changes
+// (AdRequestConfiguration removed, BannerAdView.setAdUnitId() removed,
+// BannerAdSize.stickySize -> sticky, loaders now take the listener as a loadAd()
+// parameter instead of a separate setAdLoadListener() call, BannerAdEventListener
+// lost onLeftApplication/onReturnedToApplication). This file targets the SDK 8.0.0+
+// API per https://ads.yandex.com/helpcenter/en/dev/android/release/8-0-0-migration
 
 public class MainActivity extends BridgeActivity {
 
@@ -111,7 +117,7 @@ public class MainActivity extends BridgeActivity {
             adWidthPixels = displayMetrics.widthPixels;
         }
         final int adWidth = Math.round(adWidthPixels / displayMetrics.density);
-        return BannerAdSize.stickySize(this, adWidth);
+        return BannerAdSize.sticky(this, adWidth);
     }
 
     private void loadBannerAd(@NonNull final BannerAdSize adSize) {
@@ -119,7 +125,6 @@ public class MainActivity extends BridgeActivity {
             return;
         }
         bannerAdView.setAdSize(adSize);
-        bannerAdView.setAdUnitId(BANNER_AD_UNIT_ID);
         bannerAdView.setBannerAdEventListener(new BannerAdEventListener() {
             @Override
             public void onAdLoaded() {
@@ -139,37 +144,17 @@ public class MainActivity extends BridgeActivity {
             }
 
             @Override
-            public void onLeftApplication() {
-            }
-
-            @Override
-            public void onReturnedToApplication() {
-            }
-
-            @Override
             public void onImpression(@Nullable final ImpressionData impressionData) {
             }
         });
-        bannerAdView.loadAd(new AdRequest.Builder().build());
+        bannerAdView.loadAd(new AdRequest.Builder(BANNER_AD_UNIT_ID).build());
     }
 
     // ---- App open ad (R-M-19526722-1) ----------------------------------------
     // https://ads.yandex.com/helpcenter/en/dev/android/app-open-ad
 
     private void setupAppOpenAd() {
-        appOpenAdLoader = new AppOpenAdLoader(getApplication());
-        appOpenAdLoader.setAdLoadListener(new AppOpenAdLoadListener() {
-            @Override
-            public void onAdLoaded(@NonNull final AppOpenAd loadedAppOpenAd) {
-                appOpenAd = loadedAppOpenAd;
-            }
-
-            @Override
-            public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
-                // Ad failed to load; we'll simply try again next time the app
-                // comes back to the foreground (see onProcessCameForeground below).
-            }
-        });
+        appOpenAdLoader = new AppOpenAdLoader(this);
         loadAppOpenAd();
 
         ProcessLifecycleOwner.get().getLifecycle().addObserver(new DefaultProcessLifecycleObserver() {
@@ -189,9 +174,19 @@ public class MainActivity extends BridgeActivity {
         if (appOpenAdLoader == null) {
             return;
         }
-        final AdRequestConfiguration adRequestConfiguration =
-            new AdRequestConfiguration.Builder(APP_OPEN_AD_UNIT_ID).build();
-        appOpenAdLoader.loadAd(adRequestConfiguration);
+        final AdRequest adRequest = new AdRequest.Builder(APP_OPEN_AD_UNIT_ID).build();
+        appOpenAdLoader.loadAd(adRequest, new AppOpenAdLoadListener() {
+            @Override
+            public void onAdLoaded(@NonNull final AppOpenAd loadedAppOpenAd) {
+                appOpenAd = loadedAppOpenAd;
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull final AdRequestError adRequestError) {
+                // Ad failed to load; we'll simply try again next time the app
+                // comes back to the foreground (see onProcessCameForeground above).
+            }
+        });
     }
 
     private void showAppOpenAd() {
