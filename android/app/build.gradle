@@ -59,8 +59,16 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-process:2.8.7"
 
     // Yandex Mobile Ads SDK with full mediation (all supported network adapters
-    // kept in lockstep at their current compatible versions by Yandex)
-    implementation 'com.yandex.android:mobileads-mediation:8.2.0.0'
+    // kept in lockstep at their current compatible versions by Yandex).
+    // The Google network adapter is excluded: it pulls in
+    // com.google.android.gms:play-services-ads, whose MobileAdsInitProvider
+    // crashes the app on launch unless a real AdMob App ID is configured in
+    // the manifest — and there's no AdMob account set up for this app, only
+    // the Yandex one. Excluding it here means the SDK simply skips that
+    // network in the waterfall instead of crashing.
+    implementation('com.yandex.android:mobileads-mediation:8.2.0.0') {
+        exclude group: 'com.yandex.ads.mediation', module: 'mobileads-google'
+    }
 }
 apply from: 'capacitor.build.gradle'
 try {
