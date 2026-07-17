@@ -58,17 +58,15 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
     implementation "androidx.lifecycle:lifecycle-process:2.8.7"
 
-    // Yandex Mobile Ads SDK with full mediation (all supported network adapters
-    // kept in lockstep at their current compatible versions by Yandex).
-    // The Google network adapter is excluded: it pulls in
-    // com.google.android.gms:play-services-ads, whose MobileAdsInitProvider
-    // crashes the app on launch unless a real AdMob App ID is configured in
-    // the manifest — and there's no AdMob account set up for this app, only
-    // the Yandex one. Excluding it here means the SDK simply skips that
-    // network in the waterfall instead of crashing.
-    implementation('com.yandex.android:mobileads-mediation:8.2.0.0') {
-        exclude group: 'com.yandex.ads.mediation', module: 'mobileads-google'
-    }
+    // Yandex Mobile Ads SDK — plain package, no third-party mediation adapters.
+    // Only a Yandex account is configured for this app; mobileads-mediation
+    // bundled adapters for a dozen networks (IronSource, Pangle, Tapjoy,
+    // Mintegral, Chartboost, AppNext, Google, InMobi, MyTarget, UnityAds,
+    // AppLovin, Vungle, BigoAds) with none of them actually usable, which
+    // bloated APK size and install time with unused native libraries for no
+    // benefit. The banner and app open ad code is unaffected — it's the same
+    // core SDK classes either way, mediation is purely additive.
+    implementation 'com.yandex.android:mobileads:8.2.0'
 }
 apply from: 'capacitor.build.gradle'
 try {
